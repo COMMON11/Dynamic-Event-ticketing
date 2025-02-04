@@ -20,7 +20,6 @@ const UserDetails = () => {
 
     useEffect(() => {
       if (!userId) {
-        alert("User not logged in.");
         navigate("/login"); // Redirect to login if not authenticated
       }
     }, [userId]);
@@ -32,7 +31,6 @@ const UserDetails = () => {
 
     const handleUpdate = async (e) => {
       e.preventDefault();
-      console.log(userJSON);
       try {
           const response = await axios.put(`/api/userUpdate`, {
               id: userId,

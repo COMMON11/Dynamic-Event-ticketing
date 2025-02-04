@@ -5,6 +5,7 @@ import Home from "./Home";
 import UserDetails from "./Auth/UserDetails";
 import CreateEvent from "./Events/CreateEvent";
 import ViewEvents from "./Events/ViewEvents";
+import GetEvent from "./Events/GetEvent";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/user" element={<UserDetails />} />
         <Route path="/createEvent" element={<CreateEvent />} />
         <Route path="/EventList" element={<ViewEvents />} />
+        <Route path="/event/:id" element={<GetEvent />} />
       </Routes>
     </Router>
   );

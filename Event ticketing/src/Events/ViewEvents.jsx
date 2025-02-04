@@ -21,7 +21,7 @@ export default function ViewEvents() {
       <ul>
         {events.map(event => (
           <li key={event.event_id}>
-            <Link to={`/viewEvent?id=${event.event_id}`}>{event.event_id}</Link>
+            <Link to={`/event/${event.event_id}`}>{event.event_id}</Link>
             <strong>{event.event_name}</strong> (Created by {event.created_by_uid})  
             <p>{event.description}</p>
             <small>Created: {event.creation_date}, Due: {event.due_date}</small>
