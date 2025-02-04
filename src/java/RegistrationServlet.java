@@ -118,15 +118,17 @@ public class RegistrationServlet extends HttpServlet {
             String filePath = "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/default-avatar.jpg";
             File file = new File(filePath);
             FileInputStream inputStream = new FileInputStream(file);
+            String fileType = "image/jpeg";
 
             // SQL query to insert a new user
-            String sql = "INSERT INTO users (name, uname, password, email, pic) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO users (name, uname, password, email, pic, pic_type) VALUES (?, ?, ?, ?, ?, ?)";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, name);
             stmt.setString(2, uname);
             stmt.setString(3, password);
             stmt.setString(4, email);
             stmt.setBlob(5, inputStream);
+            stmt.setString(6, fileType);
 
             // Execute the update
             int rowsInserted = stmt.executeUpdate();

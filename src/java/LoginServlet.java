@@ -66,6 +66,7 @@ public class LoginServlet extends HttpServlet {
                     String userEmail = resultSet.getString("email");
                     byte[] picBytes = resultSet.getBytes("pic");
                     String picBase64 = Base64.getEncoder().encodeToString(picBytes);
+                    String picType = resultSet.getString("pic_type");
 
                     jsonResponse.addProperty("success", true);
                     jsonResponse.addProperty("message", "Login Sucessful!");
@@ -74,6 +75,7 @@ public class LoginServlet extends HttpServlet {
                     jsonResponse.addProperty("uname", userUName);
                     jsonResponse.addProperty("email", userEmail);
                     jsonResponse.addProperty("pic", picBase64);
+                    jsonResponse.addProperty("pic_type", picType);
                 } else {
                     jsonResponse.addProperty("success", false);
                     jsonResponse.addProperty("error", isPasswordMatch);

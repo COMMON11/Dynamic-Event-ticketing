@@ -32,6 +32,7 @@ const Login = () => {
           name: response.data.name,
           email: response.data.email,
           pic: response.data.pic,
+          picType: response.data.pic_type,
         }
         localStorage.setItem("userDetails", JSON.stringify(user))
         setTimeout(() => {
