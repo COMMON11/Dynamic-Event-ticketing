@@ -14,6 +14,7 @@ const UserDetails = () => {
 
     useEffect(() => {
       setProfilePic(userJSON.pic);
+      console.log(userJSON);
     },[profilePic])
 
     const userId = Cookies.get("id");
@@ -29,6 +30,26 @@ const UserDetails = () => {
     setUserJSON({ ...userJSON, [name]: value });
     };
 
+  // Convert image to Base64
+    const handleImageUpload = (event) => {
+      const file = event.target.files[0];
+
+      if (file) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+          // Extract only Base64 data
+        reader.onload = () => {
+          const base64String = reader.result.split(",")[1]; 
+          setUserJSON({ ...userJSON, pic: base64String, picType: file.type });
+          // setProfilePic(base64String);
+        };
+
+        reader.onerror = (error) => {
+          console.error("Error converting image to Base64:", error);
+        };
+      }
+    };
+
     const handleUpdate = async (e) => {
       e.preventDefault();
       try {
@@ -41,6 +62,9 @@ const UserDetails = () => {
               alert("Account updated successfully!");
               // Optionally update localStorage with the new details
               localStorage.setItem("userDetails", JSON.stringify(userJSON));
+              setTimeout(() => {
+                  navigate("/");
+              },2000);
           } else {
               console.log(response.data );
               alert("Failed to update account.");
@@ -132,6 +156,7 @@ const UserDetails = () => {
           />
         </div>
         <button type="submit" disabled={!editMode}>Update</button>
+        <input type="file" accept="image/*" onChange={handleImageUpload} />
       </form>
       <button onClick={() => setEditMode(!editMode)} style={{ marginTop: "1rem" }}>Edit details</button>
       <button onClick={handleDelete} style={{ marginTop: "1rem", color: "red" }}>

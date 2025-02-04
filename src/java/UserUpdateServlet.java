@@ -1,4 +1,5 @@
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import java.io.ByteArrayInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.Connection;
@@ -11,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import java.util.Base64;
+
 
 @WebServlet("/updateUser")
 public class UserUpdateServlet extends HttpServlet {
@@ -36,6 +39,11 @@ public class UserUpdateServlet extends HttpServlet {
             String email = requestBody.get("email").getAsString();
             String password = requestBody.get("password").getAsString();
             String confPassword = requestBody.get("confirm_password").getAsString();
+            String ImgData = requestBody.get("pic").getAsString();
+            String ImgType = requestBody.get("picType").getAsString();
+            
+            // Decode Base64 to binary
+            byte[] imageBytes = Base64.getDecoder().decode(ImgData);
 
             conn = DatabaseConnection.getConnection();
 
@@ -61,12 +69,14 @@ public class UserUpdateServlet extends HttpServlet {
 
                 // Hash the new password and update user
                 String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(10));
-                sql = "UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?";
+                sql = "UPDATE users SET name = ?, email = ?, password = ?, pic = ?, pic_type = ? WHERE id = ?";
                 stmt = conn.prepareStatement(sql);
                 stmt.setString(1, name);
                 stmt.setString(2, email);
                 stmt.setString(3, hashedPassword);
-                stmt.setInt(4, userId);
+                stmt.setBlob(4, new ByteArrayInputStream(imageBytes));
+                stmt.setString(5, ImgType);
+                stmt.setInt(6, userId);
 
                 int rowsUpdated = stmt.executeUpdate();
                 if (rowsUpdated > 0) {
