@@ -16,6 +16,14 @@
         <servlet-name>DeleteUserSevlet</servlet-name>
         <servlet-class>DeleteUserSevlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CreateEventsServlet</servlet-name>
+        <servlet-class>CreateEventsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GetAllEventsServlet</servlet-name>
+        <servlet-class>GetAllEventsServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/login</url-pattern>
@@ -31,6 +39,14 @@
     <servlet-mapping>
         <servlet-name>DeleteUserSevlet</servlet-name>
         <url-pattern>/deleteUser</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CreateEventsServlet</servlet-name>
+        <url-pattern>/createEvent</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetAllEventsServlet</servlet-name>
+        <url-pattern>/getAllEvents</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

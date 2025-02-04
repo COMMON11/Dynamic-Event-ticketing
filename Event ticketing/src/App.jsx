@@ -3,6 +3,8 @@ import Login from "./Auth/Login";
 import Registration from "./Auth/Registration";
 import Home from "./Home";
 import UserDetails from "./Auth/UserDetails";
+import CreateEvent from "./Events/CreateEvent";
+import ViewEvents from "./Events/ViewEvents";
 
 function App() {
   return (
@@ -12,6 +14,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Registration />} />
         <Route path="/user" element={<UserDetails />} />
+        <Route path="/createEvent" element={<CreateEvent />} />
+        <Route path="/EventList" element={<ViewEvents />} />
       </Routes>
     </Router>
   );
