@@ -38,7 +38,7 @@ public class GetEventByIdServlet extends HttpServlet {
             conn = DatabaseConnection.getConnection();
 
             // SQL query to fetch the event by ID
-            String sql = "SELECT event_id, created_by_uid, event_name, description, creation_date, due_date, Logo, LogoType, Banner, BannerType FROM events WHERE event_id = ?";
+            String sql = "SELECT event_id, created_by_uid, event_name, description, creation_date, due_date, Logo, LogoType, Banner, BannerType, AvailSlots, MaxBooking, Price FROM events WHERE event_id = ?";
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, event_id);
             rs = stmt.executeQuery();
@@ -53,6 +53,9 @@ public class GetEventByIdServlet extends HttpServlet {
                 jsonResponse.addProperty("description", rs.getString("description"));
                 jsonResponse.addProperty("creation_date", rs.getString("creation_date"));
                 jsonResponse.addProperty("due_date", rs.getString("due_date"));
+                jsonResponse.addProperty("availSlots", rs.getInt("AvailSlots"));
+                jsonResponse.addProperty("maxBookings", rs.getInt("MaxBooking"));
+                jsonResponse.addProperty("price", rs.getInt("Price"));
                 byte[] logoBytes = rs.getBytes("Logo");
                 if (logoBytes != null) {
                     String logoBase64 = Base64.getEncoder().encodeToString(logoBytes);

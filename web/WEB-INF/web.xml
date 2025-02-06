@@ -32,6 +32,10 @@
         <servlet-name>GetUserDetailsSevlet</servlet-name>
         <servlet-class>GetUserDetailsSevlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>BookingServlet</servlet-name>
+        <servlet-class>BookingServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/login</url-pattern>
@@ -63,6 +67,10 @@
     <servlet-mapping>
         <servlet-name>GetUserDetailsSevlet</servlet-name>
         <url-pattern>/getUserDetails</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BookingServlet</servlet-name>
+        <url-pattern>/book</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

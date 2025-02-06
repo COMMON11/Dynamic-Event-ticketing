@@ -37,6 +37,9 @@ export default function CreateEvent() {
         logoType: "",
         banner: "",
         bannerType: "",
+        availStots: "",
+        maxBookings: "",
+        price: "",
     });
 
     const [message, setMessage] = useState("");
@@ -47,7 +50,7 @@ export default function CreateEvent() {
         setEventData({ ...eventData, [name]: value });
     };
 
-      // Convert image to Base64
+      // Convert logo image to Base64
     const handleLogoImageUpload = (event) => {
         const file = event.target.files[0];
 
@@ -67,7 +70,7 @@ export default function CreateEvent() {
         }
     };
 
-    // Convert image to Base64
+    // Convert banner image to Base64
     const handleBannerImageUpload = (event) => {
     const file = event.target.files[0];
 
@@ -128,7 +131,24 @@ export default function CreateEvent() {
             <label>Due Date:</label>
             <input type="date" name="due_date" value={eventData.due_date} onChange={handleChange} required />
             </div>
+
+            <div>
+                <label>Number of Available Tickets:</label>
+                <input type="number" name="availStots" value={eventData.availStots} onChange={handleChange} required />
+            </div>
+            
+            <div>
+                <label>Maximum Number of Bookings per User:</label>
+                <input type="number" name="maxBookings" value={eventData.maxBookings} onChange={handleChange} required />
+            </div>
+            
+            <div>
+                <label>Price per Ticket:</label>
+                <input type="number" name="price" value={eventData.price} onChange={handleChange} required />
+            </div>
+            <p>Logo:</p>
             <input type="file" accept="image/*" onChange={handleLogoImageUpload} />
+            <p>Banner:</p>
             <input type="file" accept="image/*" onChange={handleBannerImageUpload} />
             <button type="submit">Create Event</button>
         </form>

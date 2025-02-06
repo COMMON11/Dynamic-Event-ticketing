@@ -35,13 +35,16 @@ public class CreateEventsServlet extends HttpServlet {
             String bannerImg = requestBody.get("banner").getAsString();
             String bannerImgType = requestBody.get("bannerType").getAsString();
             String creation_date = LocalDate.now().toString();
+            int availSlots = requestBody.get("availStots").getAsInt();
+            int maxBookings = requestBody.get("maxBookings").getAsInt();
+            int price = requestBody.get("price").getAsInt();
             
             System.out.print(logoImgType);
       
            
 
             Connection conn = DatabaseConnection.getConnection();
-            String sql = "INSERT INTO events (created_by_uid, event_name, description, creation_date, due_date, Logo, Banner, LogoType, BannerType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO events (created_by_uid, event_name, description, creation_date, due_date, Logo, Banner, LogoType, BannerType, AvailSlots, MaxBooking, Price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, created_by_uid);
             stmt.setString(2, event_name);
@@ -72,7 +75,10 @@ public class CreateEventsServlet extends HttpServlet {
                 byte[] bannerImageBytes = Base64.getDecoder().decode(bannerImg);
                 stmt.setBlob(7, new ByteArrayInputStream(bannerImageBytes));
                 stmt.setString(9, bannerImgType);
-            }                 
+            } 
+            stmt.setInt(10, availSlots);
+            stmt.setInt(11, maxBookings);
+            stmt.setInt(12, price);
 
             JsonObject jsonResponse = new JsonObject();
             if (stmt.executeUpdate() > 0) {
