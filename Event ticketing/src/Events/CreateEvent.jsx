@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from "axios";
+import GetUser from '../Auth/GetUser';
 
 export default function CreateEvent() {
     const userDetails = localStorage.getItem("userDetails");
+    const [userJSON, setUserJSON] = useState(JSON.parse(userDetails));
     const navigate = useNavigate();
     const userId = Cookies.get("id");
     // const userJSON = userDetails ? JSON.parse(userDetails) : null;
@@ -14,6 +16,14 @@ export default function CreateEvent() {
         if (!userId) {
             window.localStorage.clear();
             navigate("/login");
+        } else {
+            // Fetch user details from the server
+            async function getUser() {
+                const user = await GetUser(userId);
+                setUserJSON(user);
+                localStorage.setItem("userDetails", JSON.stringify(user));
+            }
+            getUser();
         }
     }, [userId, navigate]);
 

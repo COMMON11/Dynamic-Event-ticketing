@@ -1,9 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import axios from "axios";
-
+import GetUser from '../Auth/GetUser';
 export default function ViewEvents() {
   const [events, setEvents] = useState([]);
+  const userDetails = localStorage.getItem("userDetails");
+  const [userJSON, setUserJSON] = useState(JSON.parse(userDetails));
+  const navigate = useNavigate();
+
+  const userId = Cookies.get("id");
+
+  useEffect(() => {
+      // Redirect to login if userId is not set
+      if (!userId) {
+          window.localStorage.clear();
+          navigate("/login");
+      } else {
+          // Fetch user details from the server
+          async function getUser() {
+              const user = await GetUser(userId);
+              if (user) {
+                setUserJSON(user);
+            localStorage.setItem("userDetails", JSON.stringify(user));
+            }
+          }
+          getUser();
+      }
+  }, [userId, navigate]);
 
   useEffect(() => {
     axios.get("/api/getAllEvents")

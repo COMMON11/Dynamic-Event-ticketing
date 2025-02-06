@@ -1,18 +1,42 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import axios from "axios";
+import GetUser from '../Auth/GetUser';
 
 const EventDetails = () => {
     const { id } = useParams();
     const [event, setEvent] = useState(null);
     const [error, setError] = useState("");
+    const userDetails = localStorage.getItem("userDetails");
+    const [userJSON, setUserJSON] = useState(JSON.parse(userDetails));
+    const navigate = useNavigate();
+
+    const userId = Cookies.get("id");
+
+    useEffect(() => {
+        // Redirect to login if userId is not set
+        if (!userId) {
+            window.localStorage.clear();
+            navigate("/login");
+        } else {
+            // Fetch user details from the server
+            async function getUser() {
+                const user = await GetUser(userId);
+                if (user) {
+                    setUserJSON(user);
+                    localStorage.setItem("userDetails", JSON.stringify(user));
+                }
+            }
+            getUser();
+        }
+    }, [userId, navigate]);
 
     useEffect(() => {
         axios.get(`/api/getEventById?event_id=${id}`)
         .then(response => {
             if (response.data.success) {
             setEvent(response.data);
-            console.log(response.data);
             } else {
             setError(response.data.message);
             }

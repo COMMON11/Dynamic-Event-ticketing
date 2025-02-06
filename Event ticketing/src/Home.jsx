@@ -1,21 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import axios from 'axios';
+import GetUser from './Auth/GetUser';
 
 export default function Home() {
     const [picType, setPicType] = useState(null);
     const [profilePic, setProfilePic] = useState(null);
     const navigate = useNavigate();
     const userId = Cookies.get("id");
-
     const userDetails = localStorage.getItem("userDetails");
-    const userJSON = userDetails ? JSON.parse(userDetails) : null;
+    const [userJSON, setUserJSON] = useState(JSON.parse(userDetails)); 
+
+    // const userDetails = localStorage.getItem("userDetails");
+    // const userJSON = userDetails ? JSON.parse(userDetails) : null;
 
     useEffect(() => {
         // Redirect to login if userId is not set
         if (!userId) {
             window.localStorage.clear();
             navigate("/login");
+        } else {
+            // Fetch user details from the server
+            async function getUser() {
+                const user = await GetUser(userId);
+                if (user) {
+                    setUserJSON(user);
+                localStorage.setItem("userDetails", JSON.stringify(user));
+                }
+            }
+            getUser();
         }
     }, [userId, navigate]);
 
@@ -23,7 +37,6 @@ export default function Home() {
         if (userJSON && userJSON.pic) {
             setProfilePic(userJSON.pic);
             setPicType(userJSON.picType);
-            console.log(userJSON.picType);
         }
     }, [userJSON]);
 

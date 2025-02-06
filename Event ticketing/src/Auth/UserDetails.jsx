@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import GetUser from './GetUser';
 import bcrypt from "bcryptjs";
 
 const UserDetails = () => {
@@ -11,19 +12,32 @@ const UserDetails = () => {
     const [userJSON, setUserJSON] = useState(JSON.parse(userDetails));
     const [editMode, setEditMode] = useState(false);
 
+    const userId = Cookies.get("id");
+
+    useEffect(() => {
+        // Redirect to login if userId is not set
+        if (!userId) {
+            window.localStorage.clear();
+            navigate("/login");
+        } else {
+            // Fetch user details from the server
+            async function getUser() {
+                const user = await GetUser(userId);
+                if (user) {
+                  setUserJSON(user);
+              localStorage.setItem("userDetails", JSON.stringify(user));
+              }
+            }
+            getUser();
+        }
+    }, [userId, navigate]);
+
 
     useEffect(() => {
       setProfilePic(userJSON.pic);
       console.log(userJSON);
     },[profilePic])
 
-    const userId = Cookies.get("id");
-
-    useEffect(() => {
-      if (!userId) {
-        navigate("/login"); // Redirect to login if not authenticated
-      }
-    }, [userId]);
 
     const handleInputChange = (e) => {
     const { name, value } = e.target;
