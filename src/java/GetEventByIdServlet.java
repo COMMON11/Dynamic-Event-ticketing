@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.JsonObject;
+import java.util.Base64;
 
 @WebServlet("/getEventById")
 public class GetEventByIdServlet extends HttpServlet {
@@ -37,7 +38,7 @@ public class GetEventByIdServlet extends HttpServlet {
             conn = DatabaseConnection.getConnection();
 
             // SQL query to fetch the event by ID
-            String sql = "SELECT event_id, created_by_uid, event_name, description, creation_date, due_date FROM events WHERE event_id = ?";
+            String sql = "SELECT event_id, created_by_uid, event_name, description, creation_date, due_date, Logo, LogoType, Banner, BannerType FROM events WHERE event_id = ?";
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, event_id);
             rs = stmt.executeQuery();
@@ -52,6 +53,24 @@ public class GetEventByIdServlet extends HttpServlet {
                 jsonResponse.addProperty("description", rs.getString("description"));
                 jsonResponse.addProperty("creation_date", rs.getString("creation_date"));
                 jsonResponse.addProperty("due_date", rs.getString("due_date"));
+                byte[] logoBytes = rs.getBytes("Logo");
+                if (logoBytes != null) {
+                    String logoBase64 = Base64.getEncoder().encodeToString(logoBytes);
+                    jsonResponse.addProperty("logo", logoBase64);
+                } else {
+                    jsonResponse.addProperty("logo", (String) null);
+                }
+                jsonResponse.addProperty("logoType", rs.getString("LogoType"));
+
+                byte[] bannerBytes = rs.getBytes("Banner");
+                if (bannerBytes != null) {
+                    String bannerBase64 = Base64.getEncoder().encodeToString(bannerBytes);
+                    jsonResponse.addProperty("banner", bannerBase64);
+                } else {
+                    jsonResponse.addProperty("banner", (String) null);
+                }
+                jsonResponse.addProperty("bannerType", rs.getString("BannerType"));
+
             } else {
                 jsonResponse.addProperty("success", false);
                 jsonResponse.addProperty("message", "Event not found.");

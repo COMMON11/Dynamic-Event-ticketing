@@ -55,6 +55,10 @@ const EventDetails = () => {
             <h2>{event.event_name}</h2>
             <p>{event.description}</p>
             <small>Created: {event.creation_date}, Due: {event.due_date}</small>
+            <p>Logo:</p>
+            <img src={`data:${event.logoType};base64,${event.logo}`} alt={event.event_name} />
+            <p>Banner:</p>
+            <img src={`data:${event.bannerType};base64,${event.banner}`} alt={event.event_name} />
             </div>
         ) : (
             <p>Loading event...</p>
