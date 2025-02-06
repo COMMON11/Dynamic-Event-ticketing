@@ -43,12 +43,16 @@ export default function ViewEvents() {
     <div>
       <h2>All Events</h2>
       <ul>
-        {events.map(event => (
+        {events && events.map(event => (
           <li key={event.event_id}>
             <Link to={`/event/${event.event_id}`}>{event.event_id}</Link>
             <strong>{event.event_name}</strong> (Created by {event.created_by_uid})  
             <p>{event.description}</p>
             <small>Created: {event.creation_date}, Due: {event.due_date}</small>
+            <p>Logo:</p>
+            <img src={`data:${event.logoType};base64,${event.logo}`} alt={event.event_name} />
+            <p>Banner:</p>
+            <img src={`data:${event.bannerType};base64,${event.banner}`} alt={event.event_name} />
           </li>
         ))}
       </ul>

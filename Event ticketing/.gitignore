@@ -12,7 +12,10 @@ dist
 dist-ssr
 *.local
 
-launch.json
+*.jpeg
+*.png
+*.jpg
+Images/
 
 # Editor directories and files
 .vscode/*

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import java.util.Base64;
 
 @WebServlet("/getAllEvents")
 public class GetAllEventsServlet extends HttpServlet {
@@ -28,7 +29,7 @@ public class GetAllEventsServlet extends HttpServlet {
             conn = DatabaseConnection.getConnection();
 
             // SQL query to fetch all events
-            String sql = "SELECT event_id, created_by_uid, event_name, description, creation_date, due_date FROM events";
+            String sql = "SELECT event_id, created_by_uid, event_name, description, creation_date, due_date, Logo, LogoType, Banner, BannerType FROM events";
             stmt = conn.prepareStatement(sql);
             rs = stmt.executeQuery();
 
@@ -43,6 +44,23 @@ public class GetAllEventsServlet extends HttpServlet {
                 event.addProperty("description", rs.getString("description"));
                 event.addProperty("creation_date", rs.getString("creation_date"));
                 event.addProperty("due_date", rs.getString("due_date"));
+                byte[] logoBytes = rs.getBytes("Logo");
+                if (logoBytes != null) {
+                    String logoBase64 = Base64.getEncoder().encodeToString(logoBytes);
+                    event.addProperty("logo", logoBase64);
+                } else {
+                    event.addProperty("logo", (String) null);
+                }
+                event.addProperty("logoType", rs.getString("LogoType"));
+
+                byte[] bannerBytes = rs.getBytes("Banner");
+                if (bannerBytes != null) {
+                    String bannerBase64 = Base64.getEncoder().encodeToString(bannerBytes);
+                    event.addProperty("banner", bannerBase64);
+                } else {
+                    event.addProperty("banner", (String) null);
+                }
+                event.addProperty("bannerType", rs.getString("BannerType"));
 
                 eventsArray.add(event);
             }

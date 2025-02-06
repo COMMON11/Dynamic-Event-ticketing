@@ -33,6 +33,10 @@ export default function CreateEvent() {
         description: "",
         creation_date: "",
         due_date: "",
+        logo: "",
+        logoType: "",
+        banner: "",
+        bannerType: "",
     });
 
     const [message, setMessage] = useState("");
@@ -43,10 +47,50 @@ export default function CreateEvent() {
         setEventData({ ...eventData, [name]: value });
     };
 
+      // Convert image to Base64
+    const handleLogoImageUpload = (event) => {
+        const file = event.target.files[0];
+
+        if (file) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+            // Extract only Base64 data
+        reader.onload = () => {
+            const base64String = reader.result.split(",")[1]; 
+            setEventData({ ...eventData, logo: base64String, logoType: file.type });
+            // setProfilePic(base64String);
+        };
+
+        reader.onerror = (error) => {
+            console.error("Error converting image to Base64:", error);
+        };
+        }
+    };
+
+    // Convert image to Base64
+    const handleBannerImageUpload = (event) => {
+    const file = event.target.files[0];
+
+    if (file) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+        // Extract only Base64 data
+    reader.onload = () => {
+        const base64String = reader.result.split(",")[1]; 
+        setEventData({ ...eventData, banner: base64String, bannerType: file.type });
+        console.log(eventData);
+    };
+
+    reader.onerror = (error) => {
+        console.error("Error converting image to Base64:", error);
+    };
+    }
+};
+
   // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        eventData.created_by_uid = userId;
+        eventData.created_by_uid = userId; 
         try {
         const response = await axios.post("/api/createEvent", eventData, {
             headers: { "Content-Type": "application/json" },
@@ -84,7 +128,8 @@ export default function CreateEvent() {
             <label>Due Date:</label>
             <input type="date" name="due_date" value={eventData.due_date} onChange={handleChange} required />
             </div>
-
+            <input type="file" accept="image/*" onChange={handleLogoImageUpload} />
+            <input type="file" accept="image/*" onChange={handleBannerImageUpload} />
             <button type="submit">Create Event</button>
         </form>
         </div>
