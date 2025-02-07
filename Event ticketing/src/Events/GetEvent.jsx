@@ -7,13 +7,18 @@ import GetUser from '../Auth/GetUser';
 const EventDetails = () => {
     const { id } = useParams();
     const [event, setEvent] = useState(null);
+    const [maxBookings, setMaxBookings] = useState(null);
     const [error, setError] = useState("");
     const userDetails = localStorage.getItem("userDetails");
     const [userJSON, setUserJSON] = useState(JSON.parse(userDetails));
     const [message, setMessage] = useState("")
+    const [disableBooking, setdisableBooking] = useState(false);
+    const [bookingChecked, setBookingChecked] = useState(false);
+
     const navigate = useNavigate();
 
     const userId = Cookies.get("id");
+    const [params, setParams] = useState(null);
     
     //check user
     useEffect(() => {
@@ -36,49 +41,73 @@ const EventDetails = () => {
 
     //Update after change
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setEvent({...event, [name]: value });
+        const quantity = parseInt(e.target.value);
+        setParams(prev => ({
+            ...prev,
+            quantity: quantity,
+            cost: quantity * (event?.price || 0)
+        }));
     };
 
     //fetch event
     useEffect(() => {
-        axios.get(`/api/getEventById?event_id=${id}`)
-        .then(response => {
-            if (response.data.success) {
-            setEvent(response.data);
-            } else {
-            setError(response.data.message);
-            }
-        })
-        .catch(error => {
-            setError("An error occurred while fetching the event.");
-        });
-    }, [id]);
+        const fetchEventDetails = async () => {
+            try {
+                const response = await axios.get(`/api/getEventById?event_id=${id}`);
+                if (response.data.success) {
+                    setEvent(response.data);
+                    setParams(prev => ({
+                        user_id: userId,
+                        event_id: id,
+                        quantity: 1,
+                        cost: response.data.price
+                    }));
+                    
+                    // After getting event details, check user booking
+                    const bookingResponse = await axios.get(
+                        `/api/checkUserBooking?user_id=${userId}&maxBookings=${response.data.maxBookings}`
+                    );
+                    
+                    if (bookingResponse.data.success) {
+                        setMaxBookings(bookingResponse.data.maxBookings);
+                        if (bookingResponse.data.maxBookings = 0) {
+                            setdisableBooking(true);
+                            setMaxBookings(1);
+                        }
 
-    //check if event already booked
+                    } else {
+                        setError(bookingResponse.data.message);
+                    }
+                    setBookingChecked(true);
+                } else {
+                    setError(response.data.message);
+                }
+            } catch (error) {
+                setError("An error occurred while fetching the event details.");
+            }
+        };
+
+        fetchEventDetails();
+    }, [id, userId]);
 
     //Book tickets
     const handleBookTicket = async () => {
-        const params = {
-            user_id: userId,
-            event_id: event.event_id,
-            quantity: 5, 
-        } 
+        setParams({cost: params.quantity * event.price, ...params})
         const response = await axios.post('/api/book', params)
 
         if (response.data.success) {
             setMessage("Ticket booked successfully")
+            setTimeout(() => {
             window.location.reload();
+            },2000);
         } else {
             alert(response.data.message);
         }
     };
 
-    function getMaxTickets() {
-        for(let i = 1; i <= event.maxBookings; i++) {
-            return <option value="{i}">${i}</option>
-        }
-    }
+    // if (isLoading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
+    if (!bookingChecked) return <div>Checking booking details...</div>;
 
     return (
         <div>
@@ -87,14 +116,15 @@ const EventDetails = () => {
         ) : event ? (
             <div>
                 {message && <p>{message}</p>}
-                <select onChange={handleChange} name="quantity" id="quantity">
-                    {[...Array(event.maxBookings)].map((_, index) => (
+                <select onChange={handleChange} name="quantity" id="quantity" disabled={disableBooking}>
+                    {[...Array(maxBookings)].map((_, index) => (
                         <option key={index + 1} value={index + 1}>
                         {index + 1}
                         </option>
                     ))}
-                </select>                
-                <input type="button" value="Book ticket" onClick={handleBookTicket} />
+                </select>    
+                <p>Cost: {params?.cost}</p>            
+                <input type="button" value="Book ticket" onClick={handleBookTicket} disabled={disableBooking} />
                 <h2>{event.event_name}</h2>
                 <p>{event.description}</p>
                 <small>Created: {event.creation_date}, Due: {event.due_date}</small>

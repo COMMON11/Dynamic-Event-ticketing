@@ -27,6 +27,7 @@ public class BookingServlet extends HttpServlet {
         int userId = requestBody.get("user_id").getAsInt();
         int eventId = requestBody.get("event_id").getAsInt();
         int quantity = requestBody.get("quantity").getAsInt();
+        int cost = requestBody.get("cost").getAsInt();
 
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -37,11 +38,12 @@ public class BookingServlet extends HttpServlet {
             conn = DatabaseConnection.getConnection();
 
             // Insert query
-            String sql = "INSERT INTO bookings (user_id, event_id, qty) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO bookings (user_id, event_id, qty, cost) VALUES (?, ?, ?, ?)";
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userId);
             stmt.setInt(2, eventId);
             stmt.setInt(3, quantity);
+            stmt.setInt(4, cost);
 
             int rowsInserted = stmt.executeUpdate();
             JsonObject jsonResponse = new JsonObject();
@@ -70,6 +72,7 @@ public class BookingServlet extends HttpServlet {
         } finally {
             try {
                 if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
