@@ -28,3 +28,6 @@ Images/
 *.njsproj
 *.sln
 *.sw?
+
+ant-deploy.xml
+private.properties
