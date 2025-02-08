@@ -78,7 +78,7 @@ const EventDetails = () => {
                         setMaxBookings(bookingResponse.data.maxBookings);
                         if (bookingResponse.data.maxBookings > params.availSlots) setMaxBookings(response.data.availSlots)
                         setParams({...params, existing: bookingResponse.data.Booked});
-                        if (bookingResponse.data.maxBookings == 0) {
+                        if (bookingResponse.data.maxBookings <= 0) {
                             setdisableBooking(true);
                             setMaxBookings(1);
                             setButtonText("Max Bookings Made");

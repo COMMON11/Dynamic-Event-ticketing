@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import GetUser from './GetUser';
 import bcrypt from "bcryptjs";
 
@@ -10,6 +10,11 @@ const UserDetails = () => {
     const [userJSON, setUserJSON] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [userLoading, setUserLoading] = useState(false);
+    const [userEvents, setUserEvents] = useState(null);
+    const [userBookings, setUserBookings] = useState(null);
+    //TODO implement loaders for these:
+    const [userEventsLoading, setUserEventsLoading] = useState(false);
+    const [userBookingsLoading, setUserBookingsLoading] = useState(null);
 
     const userId = Cookies.get("id");
 
@@ -25,7 +30,6 @@ const UserDetails = () => {
                 if (user) {
                   setUserJSON(user);
                   setUserLoading(true);
-                  
               }
             }
             getUser();
@@ -33,11 +37,25 @@ const UserDetails = () => {
     }, [userId, navigate]);
 
     useEffect(() => {
-      if (userJSON) {
-        console.log(userJSON.picType)
+      try {
+        async function fetchUserEvents() {
+        const response = await axios.get(`/api/getUserEvents?user_id=${userId}`)
+          setUserEvents(response.data);
       }
-      
-    }, [userJSON]);
+      fetchUserEvents();
+      } catch (e) {
+        console.log(e)
+      }
+      try {
+        async function fetchUserBookings() {
+        const response = await axios.get(`/api/getUserBookings?user_id=${userId}`)
+          setUserBookings(response.data);
+        }
+        fetchUserBookings();
+      } catch (e) {
+        console.log(e);
+      }
+    },[userId])
 
     const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -113,8 +131,19 @@ const UserDetails = () => {
             console.error("Error deleting account:", error);
             alert("An error occurred while deleting the account.");
         }
+      }
+    };
+
+    const handleDeleteEvent = async (id) => {
+      const response = await axios.post(`/api/deleteEvent`, {id: id});
+      if (response.data.success) {
+        alert("Event deleted successfully")
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000)
+        
+      }
     }
-};
 
     if (!userLoading) return <div>Loading user details</div>
 
@@ -176,6 +205,39 @@ const UserDetails = () => {
       <button onClick={handleDelete} style={{ marginTop: "1rem", color: "red" }}>
         Delete Account
       </button>
+
+      <div>Hosted events:</div>
+      <ul>
+        {userEvents && userEvents.map(event => (
+          <li key={event.event_id}>
+            <input type="button" value="Delete Event" onClick={() => handleDeleteEvent(event.event_id)} />
+            <Link to={`/event/${event.event_id}`}>{event.event_id}</Link>
+            <strong>{event.event_name}</strong> (Created by {event.created_by_uid})  
+            <p>{event.description}</p>
+            <small>Created: {event.creation_date}, Due: {event.due_date}</small>
+            <p>Logo:</p>
+            <img src={`data:${event.logoType};base64,${event.logo}`} alt={event.event_name} />
+            <p>Banner:</p>
+            <img src={`data:${event.bannerType};base64,${event.banner}`} alt={event.event_name} />
+          </li>
+        ))}
+      </ul>
+
+      <div>Booked Events:</div>
+      <ul>
+        {userBookings && userBookings.map(booking => (
+          <li key={booking.event_id}>
+            <Link to={`/event/${booking.event_id}`}>{booking.event_id}</Link>
+            <strong>{booking.event_name}</strong>
+            <p>Quantity: </p> {booking.qty}
+            <p>Cost: </p> {booking.cost}
+            <p>Logo:</p>
+            <img src={`data:${booking.logoType};base64,${booking.logo}`} alt={event.event_name} />
+            <p>Banner:</p>
+            <img src={`data:${booking.bannerType};base64,${booking.banner}`} alt={event.event_name} />
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

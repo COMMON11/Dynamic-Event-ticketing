@@ -40,6 +40,18 @@
         <servlet-name>CheckUserBookingServlet</servlet-name>
         <servlet-class>CheckUserBookingServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>GetUserEventsServlet</servlet-name>
+        <servlet-class>GetUserEventsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GetUserBookingsServlet</servlet-name>
+        <servlet-class>GetUserBookingsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteEventServlet</servlet-name>
+        <servlet-class>DeleteEventServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/login</url-pattern>
@@ -79,6 +91,18 @@
     <servlet-mapping>
         <servlet-name>CheckUserBookingServlet</servlet-name>
         <url-pattern>/checkUserBooking</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetUserEventsServlet</servlet-name>
+        <url-pattern>/getUserEvents</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetUserBookingsServlet</servlet-name>
+        <url-pattern>/getUserBookings</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteEventServlet</servlet-name>
+        <url-pattern>/deleteEvent</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
