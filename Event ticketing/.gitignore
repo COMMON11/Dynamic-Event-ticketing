@@ -15,6 +15,7 @@ dist-ssr
 *.jpeg
 *.png
 *.jpg
+*.class
 Images/
 
 # Editor directories and files
