@@ -28,7 +28,9 @@ public class BookingServlet extends HttpServlet {
         int eventId = requestBody.get("event_id").getAsInt();
         int quantity = requestBody.get("quantity").getAsInt();
         int cost = requestBody.get("cost").getAsInt();
+        boolean existing = requestBody.get("existing").getAsBoolean();
 
+        String sql = null;
         Connection conn = null;
         PreparedStatement stmt = null;
 
@@ -36,14 +38,24 @@ public class BookingServlet extends HttpServlet {
 
             // Establish connection
             conn = DatabaseConnection.getConnection();
-
+            
+            // Check if user already has an existing booking for the same event
+            if (existing) {
+                sql ="UPDATE bookings SET qty = qty + ?, cost = cost + ? WHERE event_id = ? AND user_id = ?";
+                stmt = conn.prepareStatement(sql);
+                stmt.setInt(1, quantity);
+                stmt.setInt(2, cost);
+                stmt.setInt(3, eventId); 
+                stmt.setInt(4, userId);
+            } else {
             // Insert query
-            String sql = "INSERT INTO bookings (user_id, event_id, qty, cost) VALUES (?, ?, ?, ?)";
+            sql = "INSERT INTO bookings (user_id, event_id, qty, cost) VALUES (?, ?, ?, ?)";
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userId);
             stmt.setInt(2, eventId);
             stmt.setInt(3, quantity);
             stmt.setInt(4, cost);
+            }
 
             int rowsInserted = stmt.executeUpdate();
             JsonObject jsonResponse = new JsonObject();

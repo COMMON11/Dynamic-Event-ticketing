@@ -115,7 +115,7 @@ public class RegistrationServlet extends HttpServlet {
         try {
             // Get database connection
             conn = DatabaseConnection.getConnection();
-            String filePath = "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/default-avatar.jpg";
+            String filePath = getServletContext().getRealPath("/Images/default-avatar.jpg");
             File file = new File(filePath);
             FileInputStream inputStream = new FileInputStream(file);
             String fileType = "image/jpeg";

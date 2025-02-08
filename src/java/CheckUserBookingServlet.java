@@ -26,14 +26,16 @@ public class CheckUserBookingServlet extends HttpServlet {
         try {
             int userID = Integer.parseInt(request.getParameter("user_id"));
             int maxBooking = Integer.parseInt(request.getParameter("maxBookings"));
+            int eventID = Integer.parseInt(request.getParameter("event_id"));
 
             // Establish database connection
             conn = DatabaseConnection.getConnection();
 
             // SQL query to fetch the event by ID
-            String sql = "SELECT qty from bookings where user_id = ?";
+            String sql = "SELECT qty from bookings where user_id = ? AND event_id = ?";
             stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userID);
+            stmt.setInt(2, eventID);
             rs = stmt.executeQuery();
 
             JsonObject jsonResponse = new JsonObject();
@@ -42,10 +44,12 @@ public class CheckUserBookingServlet extends HttpServlet {
                 int newMaxBookings = maxBooking - rs.getInt("qty");
                 jsonResponse.addProperty("success", true);
                 jsonResponse.addProperty("maxBookings", newMaxBookings);
+                jsonResponse.addProperty("Booked", true);
                 
             } else {
                 jsonResponse.addProperty("success", true);
                 jsonResponse.addProperty("maxBookings", maxBooking);
+                jsonResponse.addProperty("Booked", false);
             }
 
             // Send JSON response

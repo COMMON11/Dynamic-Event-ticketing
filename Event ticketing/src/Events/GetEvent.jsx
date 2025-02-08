@@ -14,11 +14,18 @@ const EventDetails = () => {
     const [message, setMessage] = useState("")
     const [disableBooking, setdisableBooking] = useState(false);
     const [bookingChecked, setBookingChecked] = useState(false);
+    const [buttonText, setButtonText] = useState("Book ticket(s)")
+    // const [existingUser, setExistingUser] = useState(false);
 
     const navigate = useNavigate();
 
     const userId = Cookies.get("id");
-    const [params, setParams] = useState(null);
+    const [params, setParams] = useState({
+        existing: false,
+        user_id: userId,
+        event_id: id,
+        quantity: 1,
+    });
     
     //check user
     useEffect(() => {
@@ -42,11 +49,11 @@ const EventDetails = () => {
     //Update after change
     const handleChange = (e) => {
         const quantity = parseInt(e.target.value);
-        setParams(prev => ({
-            ...prev,
+        setParams({
+            ...params,
             quantity: quantity,
             cost: quantity * (event?.price || 0)
-        }));
+        });
     };
 
     //fetch event
@@ -56,23 +63,25 @@ const EventDetails = () => {
                 const response = await axios.get(`/api/getEventById?event_id=${id}`);
                 if (response.data.success) {
                     setEvent(response.data);
-                    setParams(prev => ({
-                        user_id: userId,
-                        event_id: id,
-                        quantity: 1,
-                        cost: response.data.price
-                    }));
+                    setParams({
+                        ...params,
+                        cost: response.data.cost,
+                        availSlots: response.data.availSlots
+                    });
                     
                     // After getting event details, check user booking
                     const bookingResponse = await axios.get(
-                        `/api/checkUserBooking?user_id=${userId}&maxBookings=${response.data.maxBookings}`
+                        `/api/checkUserBooking?user_id=${userId}&maxBookings=${response.data.maxBookings}&event_id=${id}`
                     );
                     
                     if (bookingResponse.data.success) {
                         setMaxBookings(bookingResponse.data.maxBookings);
-                        if (bookingResponse.data.maxBookings = 0) {
+                        if (bookingResponse.data.maxBookings > params.availSlots) setMaxBookings(response.data.availSlots)
+                        setParams({...params, existing: bookingResponse.data.Booked});
+                        if (bookingResponse.data.maxBookings == 0) {
                             setdisableBooking(true);
                             setMaxBookings(1);
+                            setButtonText("Max Bookings Made");
                         }
 
                     } else {
@@ -84,6 +93,7 @@ const EventDetails = () => {
                 }
             } catch (error) {
                 setError("An error occurred while fetching the event details.");
+                console.log(error)
             }
         };
 
@@ -93,6 +103,7 @@ const EventDetails = () => {
     //Book tickets
     const handleBookTicket = async () => {
         setParams({cost: params.quantity * event.price, ...params})
+        console.log(params)
         const response = await axios.post('/api/book', params)
 
         if (response.data.success) {
@@ -124,7 +135,7 @@ const EventDetails = () => {
                     ))}
                 </select>    
                 <p>Cost: {params?.cost}</p>            
-                <input type="button" value="Book ticket" onClick={handleBookTicket} disabled={disableBooking} />
+                <input type="button" value={buttonText} onClick={handleBookTicket} disabled={disableBooking} />
                 <h2>{event.event_name}</h2>
                 <p>{event.description}</p>
                 <small>Created: {event.creation_date}, Due: {event.due_date}</small>

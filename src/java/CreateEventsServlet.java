@@ -52,7 +52,7 @@ public class CreateEventsServlet extends HttpServlet {
             stmt.setString(4, creation_date);
             stmt.setString(5, due_date);
             if(logoImg.isEmpty()) {
-                String filePath = "C:/Users/coman/Documents/NetBeansProjects/CA-2/Images/Default Event logo.png";
+                String filePath = getServletContext().getRealPath("/Images/Default Event logo.png");
                 File file = new File(filePath);
                 FileInputStream logoInputStream = new FileInputStream(file);
                 logoImgType = "image/jpeg";
@@ -65,7 +65,7 @@ public class CreateEventsServlet extends HttpServlet {
             }
             
             if(bannerImg.isEmpty()) {
-                String filePath = "C:/Users/coman/Documents/NetBeansProjects/CA-2/Images/Default Event banner.jpg";
+                String filePath = getServletContext().getRealPath("/Images/Default Event banner.jpg");
                 File file = new File(filePath);
                 FileInputStream bannerInputStream = new FileInputStream(file);
                 bannerImgType = "image/jpeg";
