@@ -6,11 +6,10 @@ import GetUser from './GetUser';
 import bcrypt from "bcryptjs";
 
 const UserDetails = () => {
-    const [profilePic, setProfilePic] = useState(null);
     const navigate = useNavigate();
-    const userDetails = localStorage.getItem("userDetails");
-    const [userJSON, setUserJSON] = useState(JSON.parse(userDetails));
+    const [userJSON, setUserJSON] = useState(null);
     const [editMode, setEditMode] = useState(false);
+    const [userLoading, setUserLoading] = useState(false);
 
     const userId = Cookies.get("id");
 
@@ -25,19 +24,20 @@ const UserDetails = () => {
                 const user = await GetUser(userId);
                 if (user) {
                   setUserJSON(user);
-              localStorage.setItem("userDetails", JSON.stringify(user));
+                  setUserLoading(true);
+                  
               }
             }
             getUser();
         }
     }, [userId, navigate]);
 
-
     useEffect(() => {
-      setProfilePic(userJSON.pic);
-      console.log(userJSON);
-    },[profilePic])
-
+      if (userJSON) {
+        console.log(userJSON.picType)
+      }
+      
+    }, [userJSON]);
 
     const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -74,8 +74,6 @@ const UserDetails = () => {
   
           if (response.data.success) {
               alert("Account updated successfully!");
-              // Optionally update localStorage with the new details
-              localStorage.setItem("userDetails", JSON.stringify(userJSON));
               setTimeout(() => {
                   navigate("/");
               },2000);
@@ -118,10 +116,12 @@ const UserDetails = () => {
     }
 };
 
+    if (!userLoading) return <div>Loading user details</div>
+
   return (
     <div style={{ maxWidth: "500px", margin: "auto", padding: "1rem" }}>
       <h2>User Details</h2>
-      {profilePic && <img src={`data:image/jpeg;base64,${profilePic}`} alt="Profile Pic" style={{ width: "150px", height: "150px", borderRadius: "50%" }} />}
+      <img src={`data:${userJSON.picType};base64,${userJSON.pic}`} alt="Profile Pic" style={{ width: "150px", height: "150px", borderRadius: "50%" }} />
       <form onSubmit={handleUpdate}>
         <div>
           <label>Username:</label>

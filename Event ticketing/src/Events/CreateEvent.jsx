@@ -5,11 +5,10 @@ import axios from "axios";
 import GetUser from '../Auth/GetUser';
 
 export default function CreateEvent() {
-    const userDetails = localStorage.getItem("userDetails");
-    const [userJSON, setUserJSON] = useState(JSON.parse(userDetails));
+    const [userJSON, setUserJSON] = useState(null);
     const navigate = useNavigate();
     const userId = Cookies.get("id");
-    // const userJSON = userDetails ? JSON.parse(userDetails) : null;
+    const [userLoading, setUserLoading] = useState(false);
 
     useEffect(() => {
         // Redirect to login if userId is not set
@@ -21,7 +20,7 @@ export default function CreateEvent() {
             async function getUser() {
                 const user = await GetUser(userId);
                 setUserJSON(user);
-                localStorage.setItem("userDetails", JSON.stringify(user));
+                setUserLoading(true);
             }
             getUser();
         }
@@ -111,6 +110,7 @@ export default function CreateEvent() {
         }
     };
 
+    if (!userLoading) return <div>User details loading</div>
     return (
         <div>
         <h2>Create Event</h2>

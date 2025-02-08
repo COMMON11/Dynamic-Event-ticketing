@@ -11,6 +11,7 @@ export default function Home() {
     const userId = Cookies.get("id");
     const userDetails = localStorage.getItem("userDetails");
     const [userJSON, setUserJSON] = useState(JSON.parse(userDetails)); 
+    const [userLoading, setUserLoading] = useState(false);
 
     // const userDetails = localStorage.getItem("userDetails");
     // const userJSON = userDetails ? JSON.parse(userDetails) : null;
@@ -26,7 +27,8 @@ export default function Home() {
                 const user = await GetUser(userId);
                 if (user) {
                     setUserJSON(user);
-                localStorage.setItem("userDetails", JSON.stringify(user));
+                    localStorage.setItem("userDetails", JSON.stringify(user));
+                    setUserLoading(true);
                 }
             }
             getUser();
@@ -45,6 +47,8 @@ export default function Home() {
         Cookies.remove("id");
         navigate("/login");
     }
+
+    if (!userLoading) { return <div>Loading user details</div>}  
 
     return (
         <div>

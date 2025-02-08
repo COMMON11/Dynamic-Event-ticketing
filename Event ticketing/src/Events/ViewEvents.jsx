@@ -6,7 +6,9 @@ import GetUser from '../Auth/GetUser';
 export default function ViewEvents() {
   const [events, setEvents] = useState([]);
   const userDetails = localStorage.getItem("userDetails");
-  const [userJSON, setUserJSON] = useState(JSON.parse(userDetails));
+  const [userJSON, setUserJSON] = useState(null);
+  const [userLoading, setUserLoading] = useState(false);
+  const [eventLoading, setEventLoading] = useState(false);
   const navigate = useNavigate();
 
   const userId = Cookies.get("id");
@@ -22,7 +24,7 @@ export default function ViewEvents() {
               const user = await GetUser(userId);
               if (user) {
                 setUserJSON(user);
-            localStorage.setItem("userDetails", JSON.stringify(user));
+                setUserLoading(true);
             }
           }
           getUser();
@@ -33,11 +35,15 @@ export default function ViewEvents() {
     axios.get("/api/getAllEvents")
       .then(response => {
         setEvents(response.data);
+        setEventLoading(true);
       })
       .catch(error => {
         console.error("Error fetching events:", error);
       });
   }, []);
+
+  if (!eventLoading) return <div>Loading events...</div>
+  if (!userLoading) return <div>Loading user...</div>
 
   return (
     <div>

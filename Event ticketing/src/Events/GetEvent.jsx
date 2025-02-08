@@ -10,7 +10,7 @@ const EventDetails = () => {
     const [maxBookings, setMaxBookings] = useState(null);
     const [error, setError] = useState("");
     const userDetails = localStorage.getItem("userDetails");
-    const [userJSON, setUserJSON] = useState(JSON.parse(userDetails));
+    const [userJSON, setUserJSON] = useState(null);
     const [message, setMessage] = useState("")
     const [disableBooking, setdisableBooking] = useState(false);
     const [bookingChecked, setBookingChecked] = useState(false);
