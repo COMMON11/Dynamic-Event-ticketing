@@ -12,6 +12,7 @@ export default function EditEvent() {
     const [userLoading, setUserLoading] = useState(false);
     const [message, setMessage] = useState("");
     const [eventLoading, setEventLoading] = useState(false);
+    const [submitLoading, setSubmitLoading] = useState(false);
 
     const [eventData, setEventData] = useState({
         event_name: "",
@@ -106,14 +107,18 @@ export default function EditEvent() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSubmitLoading(true);
         try {
             const response = await axios.put(`/api/eventUpdate`, eventData, {
                 headers: { "Content-Type": "application/json" },
             });
-
+            setSubmitLoading(false);
             if (response.data.success) {
+                setSubmitLoading(true);
                 setMessage("Event updated successfully!");
-                navigate(`/event/${id}`);
+                setTimeout(() => {
+                    navigate(`/event/${id}`);
+                },2000)
             } else {
                 setMessage(response.data.message || "Event update failed.");
             }
@@ -220,7 +225,7 @@ export default function EditEvent() {
                     <input type="file" accept="image/*" onChange={handleBannerImageUpload} />
                 </div>
 
-                <button type="submit">Update Event</button>
+                <button type="submit" disabled={submitLoading}>Update Event</button>
             </form>
         </div>
     );

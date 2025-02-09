@@ -16,6 +16,7 @@ const EventDetails = () => {
     const [bookingChecked, setBookingChecked] = useState(false);
     const [buttonText, setButtonText] = useState("Book ticket(s)")
     const [enableEdit , setEnableEdit] = useState(false);
+    const [submitLoading, setSubmitLoading] = useState(false);
     // const [existingUser, setExistingUser] = useState(false);
 
     const navigate = useNavigate();
@@ -74,6 +75,10 @@ const EventDetails = () => {
                         setButtonText("You're the Author");
                         setEnableEdit(true);
                     }
+                    if (response.data.availSlots.length <= 0) {
+                        setdisableBooking(true);
+                        setButtonText("Event full!");
+                    }
                     
                     // After getting event details, check user booking
                     const bookingResponse = await axios.get(
@@ -108,12 +113,14 @@ const EventDetails = () => {
 
     //Book tickets
     const handleBookTicket = async () => {
+        setSubmitLoading(true);
         setParams({cost: params.quantity * event.price, ...params})
         console.log(params)
         const response = await axios.post('/api/book', params)
-
+        setSubmitLoading(false);
         if (response.data.success) {
             setMessage("Ticket booked successfully")
+            setSubmitLoading(true);
             setTimeout(() => {
             window.location.reload();
             },2000);
@@ -142,7 +149,7 @@ const EventDetails = () => {
                     ))}
                 </select>    
                 <p>Cost: {params?.cost}</p>            
-                <input type="button" value={buttonText} onClick={handleBookTicket} disabled={disableBooking} />
+                <input type="button" value={buttonText} onClick={handleBookTicket} disabled={disableBooking || submitLoading} />
                 <h2>{event.event_name}</h2>
                 <p>{event.description}</p>
                 <small>Created: {event.creation_date}, Due: {event.due_date}</small>

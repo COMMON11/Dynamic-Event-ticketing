@@ -16,6 +16,7 @@ const UserDetails = () => {
     const [userEventsLoading, setUserEventsLoading] = useState(false);
     const [userBookingsLoading, setUserBookingsLoading] = useState(false);
     const [userArchivedLoading, setUserArchivedLoading] = useState(false);
+    const [submitLoading, setSubmitLoading] = useState(false);
 
     const userId = Cookies.get("id");
     // Check user login
@@ -100,15 +101,18 @@ const UserDetails = () => {
 
     // Update user data
     const handleUpdate = async (e) => {
+      setSubmitLoading(true);
       e.preventDefault();
       try {
           const response = await axios.put(`/api/userUpdate`, {
               id: userId,
               ...userJSON,
           });
+          setSubmitLoading(false)
   
           if (response.data.success) {
               alert("Account updated successfully!");
+              setSubmitLoading(true)
               setTimeout(() => {
                   navigate("/");
               },2000);
@@ -131,16 +135,19 @@ const UserDetails = () => {
     
     // delete user
     const handleDelete = async () => {
+      setSubmitLoading(true);
         if (window.confirm("Are you sure you want to delete your account?")) {
         try {
             const response = await axios.post(`/api/deleteUser`, { id: userId });
-
+          setSubmitLoading(false)
         if (response.data.success) {
             alert("Account deleted successfully!");
+            setSubmitLoading(true);
             // Clear cookies and localStorage
             Cookies.remove("id");
-            localStorage.clear();
+            setTimeout(() => {  
             navigate("/"); // Redirect to home or login page
+            }, 2000);
             } else {
             alert("Failed to delete account.");
             }
@@ -217,11 +224,11 @@ const UserDetails = () => {
             disabled={!editMode}
           />
         </div>
-        <button type="submit" disabled={!editMode}>Update</button>
+        <button type="submit" disabled={!editMode || submitLoading}>Update</button>
         <input type="file" accept="image/*" onChange={handleImageUpload} />
       </form>
       <button onClick={() => setEditMode(!editMode)} style={{ marginTop: "1rem" }}>Edit details</button>
-      <button onClick={handleDelete} style={{ marginTop: "1rem", color: "red" }}>
+      <button onClick={handleDelete} style={{ marginTop: "1rem", color: "red" }} disabled={submitLoading}>
         Delete Account
       </button>
 

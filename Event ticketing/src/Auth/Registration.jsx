@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link, useNavigate } from 'react-router-dom';
 import bcrypt from "bcryptjs";
 const Registration = () => {
+  const [submitLoading, setSubmitLoading] = useState(false);
   const [formData, setFormData] = useState({
     uname: "",
     name: "",
@@ -20,6 +21,7 @@ const Registration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitLoading(true);
 
     try {
       formData.password = bcrypt.hashSync(formData.password, 10);
@@ -28,13 +30,15 @@ const Registration = () => {
           "Content-Type": "application/json",
         },
       });
-      if (response.data) {
+      setSubmitLoading(false);
+      if (response.data.sucess) {
         setMessage(response.data.message);
+        setSubmitLoading(true);
         setTimeout(() => {
           navigate("/login");
         }, 2000);
       } else {
-        setMessage("Servlet failed");
+        setMessage(response.data.message);
       }
     } catch (error) {
       setMessage("An error occurred during registration.");
@@ -81,7 +85,7 @@ const Registration = () => {
             onChange={handleChange}
             required
           />
-        <button type="submit">Register</button>
+        <button type="submit" disabled={submitLoading}>Register</button>
       </form>
       {message && <p>{message}</p>}
       <p>Already have an account? <Link to={"/login"}>Login</Link></p>

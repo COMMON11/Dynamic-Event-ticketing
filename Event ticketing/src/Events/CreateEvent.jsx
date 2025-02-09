@@ -9,6 +9,7 @@ export default function CreateEvent() {
     const navigate = useNavigate();
     const userId = Cookies.get("id");
     const [userLoading, setUserLoading] = useState(false);
+    const [submitLoading, setSubmitLoading] = useState(false);
 
     useEffect(() => {
         // Redirect to login if userId is not set
@@ -93,14 +94,20 @@ export default function CreateEvent() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         eventData.created_by_uid = userId; 
+        setSubmitLoading(true);
         try {
         const response = await axios.post("/api/createEvent", eventData, {
             headers: { "Content-Type": "application/json" },
         });
+        setSubmitLoading(false);
 
         if (response.data.success) {
             setMessage("Event created successfully!");
-            setEventData({ created_by_uid: "", event_name: "", description: "", creation_date: "", due_date: "" });
+            setSubmitLoading(true);
+            setEventData({ created_by_uid: "", event_name: "", description: "", creation_date: "", due_date: "", availSlots:"", maxBookings: "",price: "",});
+            setTimeout(() => {
+                navigate("/EventList");
+            },2000)
         } else {
             setMessage(response.data.message || "Event creation failed.");
         }
@@ -150,7 +157,7 @@ export default function CreateEvent() {
             <input type="file" accept="image/*" onChange={handleLogoImageUpload} />
             <p>Banner:</p>
             <input type="file" accept="image/*" onChange={handleBannerImageUpload} />
-            <button type="submit">Create Event</button>
+            <button type="submit" disabled={submitLoading}>Create Event</button>
         </form>
         </div>
     );

@@ -5,8 +5,6 @@ import axios from 'axios';
 import GetUser from './Auth/GetUser';
 
 export default function Home() {
-    const [picType, setPicType] = useState(null);
-    const [profilePic, setProfilePic] = useState(null);
     const navigate = useNavigate();
     const userId = Cookies.get("id");
     const userDetails = localStorage.getItem("userDetails");
@@ -27,20 +25,12 @@ export default function Home() {
                 const user = await GetUser(userId);
                 if (user) {
                     setUserJSON(user);
-                    localStorage.setItem("userDetails", JSON.stringify(user));
                     setUserLoading(true);
                 }
             }
             getUser();
         }
     }, [userId, navigate]);
-
-    useEffect(() => {
-        if (userJSON && userJSON.pic) {
-            setProfilePic(userJSON.pic);
-            setPicType(userJSON.picType);
-        }
-    }, [userJSON]);
 
     function Logout() {
         window.localStorage.clear();
@@ -55,7 +45,7 @@ export default function Home() {
             <div>
                 <h1>Welcome, {userId ? `User ID: ${userId}` : "Guest"}!</h1>
                 <h1>Welcome, {userJSON && userJSON.name ? `User Name: ${userJSON.name}` : "Guest"}!</h1>
-                {profilePic && <img src={`data:${picType};base64,${profilePic}`} alt="Profile" width={"300px"} />}
+                {userJSON.pic  && <img src={`data:${userJSON.pic_type};base64,${userJSON.pic}`} alt="Profile" width={"300px"} />}
             </div>
             <h1>Event Ticketing</h1>
             <p>Welcome to Event Ticketing. Please log in or register.</p>
