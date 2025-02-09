@@ -12,12 +12,13 @@ const UserDetails = () => {
     const [userLoading, setUserLoading] = useState(false);
     const [userEvents, setUserEvents] = useState(null);
     const [userBookings, setUserBookings] = useState(null);
-    //TODO implement loaders for these:
+    const [userArchived, setUserArchived] = useState(null);
     const [userEventsLoading, setUserEventsLoading] = useState(false);
-    const [userBookingsLoading, setUserBookingsLoading] = useState(null);
+    const [userBookingsLoading, setUserBookingsLoading] = useState(false);
+    const [userArchivedLoading, setUserArchivedLoading] = useState(false);
 
     const userId = Cookies.get("id");
-
+    // Check user login
     useEffect(() => {
         // Redirect to login if userId is not set
         if (!userId) {
@@ -35,12 +36,14 @@ const UserDetails = () => {
             getUser();
         }
     }, [userId, navigate]);
-
+    
+    // fetch events, bookings, archives
     useEffect(() => {
       try {
         async function fetchUserEvents() {
         const response = await axios.get(`/api/getUserEvents?user_id=${userId}`)
           setUserEvents(response.data);
+          setUserEventsLoading(true);
       }
       fetchUserEvents();
       } catch (e) {
@@ -50,13 +53,26 @@ const UserDetails = () => {
         async function fetchUserBookings() {
         const response = await axios.get(`/api/getUserBookings?user_id=${userId}`)
           setUserBookings(response.data);
+          setUserBookingsLoading(true);
         }
         fetchUserBookings();
       } catch (e) {
         console.log(e);
       }
+      try {
+        async function fetchUserArchived() {
+        const response = await axios.get(`/api/getUserArchived?user_id=${userId}`)
+          setUserArchived(response.data);
+          setUserArchivedLoading(true);
+          console.log(response.data);
+        }
+        fetchUserArchived();
+      } catch (e) {
+        console.log(e);
+      }
     },[userId])
 
+    // Handle input for user details
     const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUserJSON({ ...userJSON, [name]: value });
@@ -82,6 +98,7 @@ const UserDetails = () => {
       }
     };
 
+    // Update user data
     const handleUpdate = async (e) => {
       e.preventDefault();
       try {
@@ -112,7 +129,7 @@ const UserDetails = () => {
       }
   };
     
-
+    // delete user
     const handleDelete = async () => {
         if (window.confirm("Are you sure you want to delete your account?")) {
         try {
@@ -133,7 +150,8 @@ const UserDetails = () => {
         }
       }
     };
-
+    
+    // delete event
     const handleDeleteEvent = async (id) => {
       const response = await axios.post(`/api/deleteEvent`, {id: id});
       if (response.data.success) {
@@ -145,8 +163,9 @@ const UserDetails = () => {
       }
     }
 
-    if (!userLoading) return <div>Loading user details</div>
 
+    if (!userLoading) return <div>Loading user details</div>
+    if (!userEventsLoading || !userBookingsLoading || !userArchivedLoading) return <div>Loading events and bookings</div>
   return (
     <div style={{ maxWidth: "500px", margin: "auto", padding: "1rem" }}>
       <h2>User Details</h2>
@@ -235,6 +254,24 @@ const UserDetails = () => {
             <img src={`data:${booking.logoType};base64,${booking.logo}`} alt={event.event_name} />
             <p>Banner:</p>
             <img src={`data:${booking.bannerType};base64,${booking.banner}`} alt={event.event_name} />
+          </li>
+        ))}
+      </ul>
+      <div>Archived Events:</div>
+      <ul>
+        {userArchived && userArchived.map(event => (
+          <li key={event.event_id}>
+            {/* <input type="button" value="Delete Event" onClick={() => handleDeleteEvent(event.event_id)} /> */}
+            <Link to={`/event/${event.event_id}`}>{event.event_id}</Link>
+            <strong>{event.event_name}</strong> (Created by {event.created_by_uid})  
+            <p>{event.description}</p>
+            <small>Created: {event.creation_date}, Due: {event.due_date}</small>
+            <p>Total Quantity: {event.total_qty}</p>
+            <p>Total Cost: {event.total_cost}</p>
+            <p>Logo:</p>
+            <img src={`data:${event.logoType};base64,${event.logo}`} alt={event.event_name} />
+            <p>Banner:</p>
+            <img src={`data:${event.bannerType};base64,${event.banner}`} alt={event.event_name} />
           </li>
         ))}
       </ul>

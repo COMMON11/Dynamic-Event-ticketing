@@ -52,6 +52,10 @@
         <servlet-name>DeleteEventServlet</servlet-name>
         <servlet-class>DeleteEventServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>GetUserArchivedServlet</servlet-name>
+        <servlet-class>GetUserArchivedServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/login</url-pattern>
@@ -103,6 +107,10 @@
     <servlet-mapping>
         <servlet-name>DeleteEventServlet</servlet-name>
         <url-pattern>/deleteEvent</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetUserArchivedServlet</servlet-name>
+        <url-pattern>/getUserArchived</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

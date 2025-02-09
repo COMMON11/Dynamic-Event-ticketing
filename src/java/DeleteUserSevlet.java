@@ -45,6 +45,11 @@ public class DeleteUserSevlet extends HttpServlet {
             if (rowsDeleted > 0) {
                 jsonResponse.addProperty("success", true);
                 jsonResponse.addProperty("message", "User deleted successfully.");
+                // Delete all user events
+                sql = "DELETE FROM events WHERE created_by_uid = ?";
+                stmt = conn.prepareStatement(sql);
+                stmt.setInt(1, userId);
+                stmt.executeUpdate();
             } else {
                 jsonResponse.addProperty("success", false);
                 jsonResponse.addProperty("message", "User not found.");

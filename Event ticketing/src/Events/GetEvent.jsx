@@ -60,7 +60,7 @@ const EventDetails = () => {
     useEffect(() => {
         const fetchEventDetails = async () => {
             try {
-                const response = await axios.get(`/api/getEventById?event_id=${id}`);
+                const response = await axios.get(`/api/getEventById?event_id=${id}&user_id=${userId}`);
                 if (response.data.success) {
                     setEvent(response.data);
                     setParams({

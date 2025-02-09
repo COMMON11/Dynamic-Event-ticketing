@@ -1,3 +1,4 @@
+import com.google.gson.JsonArray;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.JsonObject;
 import java.util.Base64;
 
-@WebServlet("/getEventById")
-public class GetEventByIdServlet extends HttpServlet {
+@WebServlet("/getUserArchived")
+public class GetUserArchivedServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -24,33 +25,21 @@ public class GetEventByIdServlet extends HttpServlet {
         ResultSet rs = null;
 
         try {
-            // Get event_id from request parameters
-            String eventIdParam = request.getParameter("event_id");
             int userId = Integer.parseInt(request.getParameter("user_id"));
-
-            if (eventIdParam == null || eventIdParam.isEmpty()) {
-                response.getWriter().write("{\"success\": false, \"message\": \"Event ID is required.\"}");
-                return;
-            }
-
-            int event_id = Integer.parseInt(eventIdParam);
 
             // Establish database connection
             conn = DatabaseConnection.getConnection();
 
             // SQL query to fetch the event by ID
-            String sql = "SELECT event_id, created_by_uid, event_name, description, creation_date, due_date, Logo, LogoType, Banner, BannerType, AvailSlots, MaxBooking, Price FROM events WHERE event_id = ?";
+            String sql = "SELECT event_id, created_by_uid, event_name, description, creation_date, due_date, Logo, LogoType, Banner, BannerType, AvailSlots, MaxBooking, Price, Total_qty, Total_cost FROM events_archived WHERE created_by_uid = ?";
             stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, event_id);
+            stmt.setInt(1, userId);
             rs = stmt.executeQuery();
 
-            JsonObject jsonResponse = new JsonObject();
+            JsonArray ArchivedArray = new JsonArray();
 
             if (rs.next()) {
-                if (rs.getInt("created_by_uid") == userId) {
-                    jsonResponse.addProperty("Author", true);
-                }
-                jsonResponse.addProperty("success", true);
+                JsonObject jsonResponse = new JsonObject();
                 jsonResponse.addProperty("event_id", rs.getInt("event_id"));
                 jsonResponse.addProperty("created_by_uid", rs.getInt("created_by_uid"));
                 jsonResponse.addProperty("event_name", rs.getString("event_name"));
@@ -60,6 +49,8 @@ public class GetEventByIdServlet extends HttpServlet {
                 jsonResponse.addProperty("availSlots", rs.getInt("AvailSlots"));
                 jsonResponse.addProperty("maxBookings", rs.getInt("MaxBooking"));
                 jsonResponse.addProperty("price", rs.getInt("Price"));
+                jsonResponse.addProperty("total_qty", rs.getInt("Total_qty"));
+                jsonResponse.addProperty("Total_cost", rs.getFloat("Total_cost"));
                 byte[] logoBytes = rs.getBytes("Logo");
                 if (logoBytes != null) {
                     String logoBase64 = Base64.getEncoder().encodeToString(logoBytes);
@@ -77,14 +68,18 @@ public class GetEventByIdServlet extends HttpServlet {
                     jsonResponse.addProperty("banner", (String) null);
                 }
                 jsonResponse.addProperty("bannerType", rs.getString("BannerType"));
+                
+                ArchivedArray.add(jsonResponse);
 
             } else {
+                JsonObject jsonResponse = new JsonObject();
                 jsonResponse.addProperty("success", false);
                 jsonResponse.addProperty("message", "Event not found.");
+                ArchivedArray.add(jsonResponse);
             }
 
             // Send JSON response
-            response.getWriter().write(jsonResponse.toString());
+            response.getWriter().write(ArchivedArray.toString());
 
         } catch (NumberFormatException e) {
             response.getWriter().write("{\"success\": false, \"message\": \"Invalid Event ID format.\"}");
