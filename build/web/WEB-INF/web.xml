@@ -56,6 +56,10 @@
         <servlet-name>GetUserArchivedServlet</servlet-name>
         <servlet-class>GetUserArchivedServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>EventUpdateServlet</servlet-name>
+        <servlet-class>EventUpdateServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/login</url-pattern>
@@ -111,6 +115,10 @@
     <servlet-mapping>
         <servlet-name>GetUserArchivedServlet</servlet-name>
         <url-pattern>/getUserArchived</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EventUpdateServlet</servlet-name>
+        <url-pattern>/eventUpdate</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

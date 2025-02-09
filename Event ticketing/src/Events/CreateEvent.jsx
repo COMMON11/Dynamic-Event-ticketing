@@ -36,7 +36,7 @@ export default function CreateEvent() {
         logoType: "",
         banner: "",
         bannerType: "",
-        availStots: "",
+        availSlots: "",
         maxBookings: "",
         price: "",
     });
@@ -134,7 +134,7 @@ export default function CreateEvent() {
 
             <div>
                 <label>Number of Available Tickets:</label>
-                <input type="number" name="availStots" value={eventData.availStots} onChange={handleChange} required />
+                <input type="number" name="availSlots" value={eventData.availSlots} onChange={handleChange} required />
             </div>
             
             <div>

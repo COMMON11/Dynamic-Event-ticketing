@@ -6,6 +6,7 @@ import UserDetails from "./Auth/UserDetails";
 import CreateEvent from "./Events/CreateEvent";
 import ViewEvents from "./Events/ViewEvents";
 import GetEvent from "./Events/GetEvent";
+import EditEvent from "./Events/EditEvent";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/createEvent" element={<CreateEvent />} />
         <Route path="/EventList" element={<ViewEvents />} />
         <Route path="/event/:id" element={<GetEvent />} />
+        <Route path="/event/edit/:id" element={<EditEvent />} />
       </Routes>
     </Router>
   );

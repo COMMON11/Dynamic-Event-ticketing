@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from "axios";
 import GetUser from '../Auth/GetUser';
@@ -15,6 +15,7 @@ const EventDetails = () => {
     const [disableBooking, setdisableBooking] = useState(false);
     const [bookingChecked, setBookingChecked] = useState(false);
     const [buttonText, setButtonText] = useState("Book ticket(s)")
+    const [enableEdit , setEnableEdit] = useState(false);
     // const [existingUser, setExistingUser] = useState(false);
 
     const navigate = useNavigate();
@@ -68,6 +69,11 @@ const EventDetails = () => {
                         cost: response.data.cost,
                         availSlots: response.data.availSlots
                     });
+                    if (response.data.Author) {
+                        setdisableBooking(true);
+                        setButtonText("You're the Author");
+                        setEnableEdit(true);
+                    }
                     
                     // After getting event details, check user booking
                     const bookingResponse = await axios.get(
@@ -127,6 +133,7 @@ const EventDetails = () => {
         ) : event ? (
             <div>
                 {message && <p>{message}</p>}
+                {enableEdit && <Link to={`/event/edit/${event.event_id}`}><input type="button" value="Edit event"/></Link>}
                 <select onChange={handleChange} name="quantity" id="quantity" disabled={disableBooking}>
                     {[...Array(maxBookings)].map((_, index) => (
                         <option key={index + 1} value={index + 1}>
