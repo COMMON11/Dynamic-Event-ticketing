@@ -13,6 +13,7 @@ import com.google.gson.JsonParser;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.sql.ResultSet;
 import java.util.Base64;
 
 @WebServlet("/eventUpdate")
@@ -34,64 +35,67 @@ public class EventUpdateServlet extends HttpServlet {
             String logoImgType = requestBody.get("logoType").getAsString();
             String bannerImg = requestBody.get("banner").getAsString();
             String bannerImgType = requestBody.get("bannerType").getAsString();
-            String creation_date = LocalDate.now().toString();
             int availSlots = requestBody.get("availSlots").getAsInt();
             int maxBookings = requestBody.get("maxBookings").getAsInt();
             int price = requestBody.get("price").getAsInt();
-            
-            System.out.print(logoImgType);
-      
            
-
             Connection conn = DatabaseConnection.getConnection();
-            String sql = "UPDATE events SET event_name=?, description=?, Due_date=?, Logo=?, LogoType=?, Banner=?, BannerType=?, AvailSlots=?, MaxBooking=?, Price=? WHERE event_id=?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, event_name);
-            stmt.setString(2, description);
-            stmt.setString(3, due_date);
-//            stmt.setString(4, creation_date);
-//            stmt.setString(5, due_date);
-            if(logoImg.isEmpty()) {
-                String filePath = getServletContext().getRealPath("/Images/Default Event logo.png");
-                File file = new File(filePath);
-                FileInputStream logoInputStream = new FileInputStream(file);
-                logoImgType = "image/jpeg";
-                stmt.setBlob(4, logoInputStream);
-                stmt.setString(5, logoImgType);
-            } else {
-                byte[] logoImageBytes = Base64.getDecoder().decode(logoImg);
-                stmt.setBlob(4, new ByteArrayInputStream(logoImageBytes));
-                stmt.setString(5, logoImgType);
-            }
-            
-            if(bannerImg.isEmpty()) {
-                String filePath = getServletContext().getRealPath("/Images/Default Event banner.jpg");
-                File file = new File(filePath);
-                FileInputStream bannerInputStream = new FileInputStream(file);
-                bannerImgType = "image/jpeg";
-                stmt.setBlob(6, bannerInputStream);
-                stmt.setString(7, bannerImgType);
-            } else {
-                byte[] bannerImageBytes = Base64.getDecoder().decode(bannerImg);
-                stmt.setBlob(6, new ByteArrayInputStream(bannerImageBytes));
-                stmt.setString(7, bannerImgType);
-            } 
-            stmt.setInt(8, availSlots);
-            stmt.setInt(9, maxBookings);
-            stmt.setInt(10, price);
-            stmt.setInt(11, event_id);
+            String sql= "SELECT event_name from events where event_name = ?";
+            PreparedStatement stmt2 = conn.prepareStatement(sql);
+            stmt2.setString(1, event_name);
+            ResultSet rs = stmt2.executeQuery();
 
             JsonObject jsonResponse = new JsonObject();
-            if (stmt.executeUpdate() > 0) {
-                jsonResponse.addProperty("success", true);
-                jsonResponse.addProperty("message", "Event created successfully.");
-            } else {
+            if (rs.next() && !rs.getString("event_name").equals(event_name)) {
                 jsonResponse.addProperty("success", false);
-                jsonResponse.addProperty("message", "Failed to create event.");
+                jsonResponse.addProperty("message", "Event with given name already exists!");
+                response.getWriter().write(jsonResponse.toString());
+            } else {
+                sql = "UPDATE events SET event_name=?, description=?, Due_date=?, Logo=?, LogoType=?, Banner=?, BannerType=?, AvailSlots=?, MaxBooking=?, Price=? WHERE event_id=?";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, event_name);
+                stmt.setString(2, description);
+                stmt.setString(3, due_date);
+                if(logoImg.isEmpty()) {
+                    String filePath = getServletContext().getRealPath("/Images/Default Event logo.png");
+                    File file = new File(filePath);
+                    FileInputStream logoInputStream = new FileInputStream(file);
+                    logoImgType = "image/jpeg";
+                    stmt.setBlob(4, logoInputStream);
+                    stmt.setString(5, logoImgType);
+                } else {
+                    byte[] logoImageBytes = Base64.getDecoder().decode(logoImg);
+                    stmt.setBlob(4, new ByteArrayInputStream(logoImageBytes));
+                    stmt.setString(5, logoImgType);
+                }
+
+                if(bannerImg.isEmpty()) {
+                    String filePath = getServletContext().getRealPath("/Images/Default Event banner.jpg");
+                    File file = new File(filePath);
+                    FileInputStream bannerInputStream = new FileInputStream(file);
+                    bannerImgType = "image/jpeg";
+                    stmt.setBlob(6, bannerInputStream);
+                    stmt.setString(7, bannerImgType);
+                } else {
+                    byte[] bannerImageBytes = Base64.getDecoder().decode(bannerImg);
+                    stmt.setBlob(6, new ByteArrayInputStream(bannerImageBytes));
+                    stmt.setString(7, bannerImgType);
+                } 
+                stmt.setInt(8, availSlots);
+                stmt.setInt(9, maxBookings);
+                stmt.setInt(10, price);
+                stmt.setInt(11, event_id);
+
+                if (stmt.executeUpdate() > 0) {
+                    jsonResponse.addProperty("success", true);
+                    jsonResponse.addProperty("message", "Event created successfully.");
+                } else {
+                    jsonResponse.addProperty("success", false);
+                    jsonResponse.addProperty("message", "Failed to create event.");
+                }
+
+                response.getWriter().write(jsonResponse.toString());
             }
-
-            response.getWriter().write(jsonResponse.toString());
-
         } catch (Exception e) {
             e.printStackTrace();
             response.getWriter().write("{\"success\": false, \"message\": \"An error occurred.\"}");

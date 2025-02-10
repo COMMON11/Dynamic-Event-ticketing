@@ -11,7 +11,8 @@ const Registration = () => {
     email: "",
   });
 
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(""); 
+  const [messageStyle, setMessageStyle] = useState(null);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -31,16 +32,19 @@ const Registration = () => {
         },
       });
       setSubmitLoading(false);
-      if (response.data.sucess) {
+      if (response.data.success) {
+        setMessageStyle("text-green-500");
         setMessage(response.data.message);
         setSubmitLoading(true);
         setTimeout(() => {
           navigate("/login");
         }, 2000);
       } else {
+        setMessageStyle("text-red-500");
         setMessage(response.data.message);
       }
     } catch (error) {
+      setMessageStyle("text-red-500");
       setMessage("An error occurred during registration.");
     }
   };
@@ -97,7 +101,7 @@ const Registration = () => {
                     <button 
                         type="submit" 
                         disabled={submitLoading} 
-                        className="bg-gray-300 w-28 h-12 relative z-10 transition duration-75 ease-in-out border-2 border-gray-400 active:translate-x-2 active:translate-y-2 hover:border-4 hover:border-gray-500"
+                        className="bg-redishpink-100 text-white w-28 h-12 relative z-10 transition duration-75 ease-in-out border-2 border-red-500 active:translate-x-2 active:translate-y-2 hover:border-4 hover:border-red-600 disabled:bg-gray-500 disabled:border-gray-800"
                     >
                         Register
                     </button>
@@ -105,7 +109,7 @@ const Registration = () => {
                 </div>
             </div>
       </form>
-      {message && <p>{message}</p>}
+      {message && <p className={`${messageStyle} font-bold text-lg text-center mt-8`}>{message}</p>}
       <p className="text-center mt-12 font-bold font-display text-lg mb-2">Already have an account? <Link to={"/login"} className="text-blue-400 underline">Login</Link></p>
     </div>
     </div>

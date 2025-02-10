@@ -25,16 +25,11 @@ public class RegistrationServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
 
-        StringBuilder data = new StringBuilder();
         BufferedReader reader = request.getReader();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            data.append(line);
-        }
+        JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
 
         try {
             // Parse JSON data
-            JsonObject jsonObject = JsonParser.parseString(data.toString()).getAsJsonObject();
             String name = jsonObject.get("name").getAsString();
             String uname = jsonObject.get("uname").getAsString();
             String password = jsonObject.get("password").getAsString();
