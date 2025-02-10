@@ -44,28 +44,44 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <Link to={"/"}><input type="button" value={"Home"} /></Link>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-          <label>Username:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        <button type="submit" disabled={submitLoading}>Login</button>
-      </form>
-      {message && <p>{message}</p>}
-      <p>New here? <Link to={"/register"}>Register</Link></p>
+    <div className="flex flex-row w-screen h-screen items-center justify-center bg-redishpink-100">
+      <div className="bg-gray-100 h-[36 rem] w-[30rem] border-8 border-gray-300 rounded-2xl">
+        <h2 className="font-display font-bold text-5xl text-center mt-6">Login</h2>
+        <form onSubmit={handleSubmit} className="ml-12 mt-12 font-display text-xl">
+            <label className="">Username:</label><br/>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter your username"
+              className="bg-gray-300 my-4 p-2 rounded-[0.5rem] w-[90%] transition duration-200 ease-in-out border-2 border-gray-400 hover:border-gray-600 hover:bg-gray-200"
+              required
+            /> <br/>
+            <label>Password:</label><br/>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              className="bg-gray-300 my-4 p-2 rounded-[0.5rem] w-[90%] transition duration-200 ease-in-out border-2 border-gray-400 hover:border-gray-600 hover:bg-gray-200"
+              required
+            /><br/>
+            <div className="flex justify-center mt-4 -ml-12">
+                <div className="relative">  
+                    <button 
+                        type="submit" 
+                        disabled={submitLoading} 
+                        className="bg-gray-300 w-28 h-12 relative z-10 transition duration-75 ease-in-out border-2 border-gray-400 active:translate-x-2 active:translate-y-2 hover:border-4 hover:border-gray-500"
+                    >
+                        Login
+                    </button>
+                    <div className='w-28 h-12 bg-black absolute top-2 left-2 z-0'></div>
+                </div>
+            </div>
+        </form>
+        {message && <p>{message}</p>}
+        <p className="text-center mt-12 font-bold font-display text-lg">New here? <Link to={"/register"} className="text-blue-400 underline">Register</Link></p>
+      </div>
     </div>
   );
 };
