@@ -174,9 +174,30 @@ const UserDetails = () => {
     if (!userLoading) return <div>Loading user details</div>
     if (!userEventsLoading || !userBookingsLoading || !userArchivedLoading) return <div>Loading events and bookings</div>
   return (
-    <div style={{ maxWidth: "500px", margin: "auto", padding: "1rem" }}>
-      <h2>User Details</h2>
-      <img src={`data:${userJSON.picType};base64,${userJSON.pic}`} alt="Profile Pic" style={{ width: "150px", height: "150px", borderRadius: "50%" }} />
+    <div className="border-8 border-gray-500 bg-gray-200 rounded-2xl w-[80%] h-fit flex-col flex items-center font-display">
+      <h2 className="text-6xl text-bold">User Details</h2>
+      <div className="relative">
+            <div className="group relative w-40 h-40 border-2 border-dashed border-gray-300 rounded-full hover:border-gray-400 transition-colors duration-300 bg-white">
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-50"
+                />
+                {userJSON &&
+                    <img
+                        src={`data:${userJSON.picType};base64,${userJSON.pic}`}
+                        alt="PreviewLogo"
+                        className="w-full h-full object-cover rounded-full z-10 transition duration-300 group-hover:opacity-10"
+                    />
+                  }
+                    <div className="flex flex-col items-center justify-center h-full opacity-0 transition-all duration-300 group-hover:opacity-100 z-20 -translate-y-40">
+                    <i className="fa-solid fa-pencil text-black text-4xl"></i>
+                    <span className="mt-2 text-sm text-black">Upload Image</span>
+                    </div>
+                </div>
+            </div>
+      {/* <img src={`data:${userJSON.picType};base64,${userJSON.pic}`} alt="Profile Pic" className=""/> */}
       <form onSubmit={handleUpdate}>
         <div>
           <label>Username:</label>

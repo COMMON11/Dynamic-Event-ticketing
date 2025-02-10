@@ -6,6 +6,7 @@ import axios from "axios";
 import GetUser from '../Auth/GetUser';
 import defaultLogo from '../../../web/Images/Default Event Logo.png'
 import defaultBanner from '../../../web/Images/Default Event banner.jpg';
+import Navbar from '../../Navbar';
 
 export default function CreateEvent() {
     const [userJSON, setUserJSON] = useState(null);
@@ -169,6 +170,8 @@ export default function CreateEvent() {
 
     
     return (
+        <>
+        <Navbar userJSON={userJSON}/>
         <div className='h-screen w-full bg-redishpink-100 font-display flex flex-col items-center'>
         <h2 className='text-center font-bold text-6xl'>Create Event</h2>
         <form onSubmit={handleSubmit} className='w-[70%] bg-gray-100 border-4 border-gray-400 rounded-2xl'>
@@ -314,5 +317,6 @@ export default function CreateEvent() {
             </div>
         </form>
         </div>
+        </> 
     );
 }

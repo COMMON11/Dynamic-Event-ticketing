@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from "axios";
 import GetUser from '../Auth/GetUser';
+import Navbar from '../../Navbar';
 
 export default function EditEvent() {
     const { id } = useParams();
@@ -158,7 +159,10 @@ export default function EditEvent() {
     if (eventData && userId != eventData.created_by_uid ) return <div className='flex font-display w-screen h-screen justify-center content-center text-9xl'>Cannot edit event not hosted by you.</div>;
 
     return (
+        <>
+        <Navbar userJSON={userJSON}/>
         <div className='h-screen w-full font-display flex flex-col items-center'>
+            
             <h2 className='text-center font-bold text-6xl'>Edit Event</h2>
             {message && <p>{message}</p>}
             <form onSubmit={handleSubmit} className='w-[70%] bg-gray-100 border-4 border-gray-400 rounded-2xl'>
@@ -300,5 +304,6 @@ export default function EditEvent() {
             </div>
             </form>
         </div>
+        </>
     );
 }

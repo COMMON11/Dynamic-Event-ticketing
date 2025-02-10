@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from "axios";
 import GetUser from '../Auth/GetUser';
+import Navbar from "../../Navbar";
 
 const EventDetails = () => {
     const { id } = useParams();
@@ -141,7 +142,8 @@ const EventDetails = () => {
 
     return (
         <>
-        <div className="font-display flex flex-col items-center">
+        <Navbar userJSON={userJSON}/>
+        <div className="font-display flex flex-col items-center mt-10">
             <div className="w-[70%] bg-gray-100 border-4 border-gray-400 rounded-2xl min-h-screen">
                 <img src={`data:${event.bannerType};base64,${event.banner}`} alt={event.event_name} className="w-full h-72 rounded-t-xl border-4 border-gray-400"/>
                 <img src={`data:${event.logoType};base64,${event.logo}`} alt={event.event_name}  className="inset-0 w-40 h-40 rounded-full border-8 border-gray-400 -translate-y-20 translate-x-12"/>
