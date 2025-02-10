@@ -80,7 +80,7 @@ const Login = () => {
             </div>
         </form>
         {message && <p>{message}</p>}
-        <p className="text-center mt-12 font-bold font-display text-lg">New here? <Link to={"/register"} className="text-blue-400 underline">Register</Link></p>
+        <p className="text-center mt-12 font-bold font-display text-lg mb-2">New here? <Link to={"/register"} className="text-blue-400 underline">Register</Link></p>
       </div>
     </div>
   );

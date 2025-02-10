@@ -10,6 +10,7 @@ export default function CreateEvent() {
     const userId = Cookies.get("id");
     const [userLoading, setUserLoading] = useState(false);
     const [submitLoading, setSubmitLoading] = useState(false);
+    const [preview, setPreview] = useState(null);
 
     useEffect(() => {
         // Redirect to login if userId is not set
@@ -118,9 +119,21 @@ export default function CreateEvent() {
     };
 
     if (!userLoading) return <div>User details loading</div>
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+            onImageUpload(file);
+        }
+    };
     return (
-        <div>
-        <h2>Create Event</h2>
+        <div className='h-full w-full bg-redishpink-100 font-display flex-col'>
+        <h2 className='text-center font-bold text-6xl'>Create Event</h2>
         {message && <p>{message}</p>}
         <form onSubmit={handleSubmit}>
 
@@ -153,8 +166,41 @@ export default function CreateEvent() {
                 <label>Price per Ticket:</label>
                 <input type="number" name="price" value={eventData.price} onChange={handleChange} required />
             </div>
-            <p>Logo:</p>
-            <input type="file" accept="image/*" onChange={handleLogoImageUpload} />
+            <div className="relative">
+            <label className="block mb-2 font-display">Logo:</label>
+            <div className="relative w-32 h-32 border-2 border-dashed border-gray-300 rounded-full hover:border-gray-400 transition-colors duration-300">
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                />
+                {preview ? (
+                    <img
+                        src={preview}
+                        alt="Preview"
+                        className="w-full h-full object-cover rounded-full"
+                    />
+                ) : (
+                    <div className="flex flex-col items-center justify-center h-full">
+                        <svg
+                            className="w-8 h-8 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                            />
+                        </svg>
+                        <span className="mt-2 text-sm text-gray-500">Upload Image</span>
+                    </div>
+                )}
+            </div>
+        </div>
             <p>Banner:</p>
             <input type="file" accept="image/*" onChange={handleBannerImageUpload} />
             <button type="submit" disabled={submitLoading}>Create Event</button>
