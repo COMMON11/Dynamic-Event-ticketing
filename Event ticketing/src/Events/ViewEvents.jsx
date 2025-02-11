@@ -36,7 +36,8 @@ export default function ViewEvents() {
   useEffect(() => {
     axios.get("/api/getAllEvents")
       .then(response => {
-        setEvents(response.data);
+        const sortedEvents = response.data.sort((a, b) => new Date(b.creation_date) - new Date(a.creation_date));
+        setEvents(sortedEvents);
         setEventLoading(true);
       })
       .catch(error => {

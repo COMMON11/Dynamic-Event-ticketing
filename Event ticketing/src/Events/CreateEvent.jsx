@@ -145,6 +145,9 @@ export default function CreateEvent() {
             reader.onloadend = () => {
                 setPreviewLogo(reader.result);
             };
+            reader.readAsDataURL(file);
+            // handleLogoImageUpload(e);
+            // onImageUpload(file);
         }
     };
 
@@ -155,6 +158,7 @@ export default function CreateEvent() {
             reader.onloadend = () => {
                 setPreviewBanner(reader.result);
             };
+            reader.readAsDataURL(file);
         }
     };
 
@@ -172,7 +176,7 @@ export default function CreateEvent() {
     return (
         <>
         <Navbar userJSON={userJSON}/>
-        <div className='h-screen w-full bg-redishpink-100 font-display flex flex-col items-center'>
+        <div className='h-screen w-full font-display flex flex-col items-center mt-12'>
         <h2 className='text-center font-bold text-6xl'>Create Event</h2>
         <form onSubmit={handleSubmit} className='w-[70%] bg-gray-100 border-4 border-gray-400 rounded-2xl'>
 

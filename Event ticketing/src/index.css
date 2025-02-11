@@ -3,17 +3,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* @theme {
-    --font-display: "lexend", "serif"; 
-    --breakpoint-3xl: 1920px;
-    --color-redishpink-100: #ff4d6d;
-  } */
-
-  .kanit-regular {
-    font-family: "Kanit", serif;
-    font-weight: 400;
-    font-style: normal;
-  }
 
 
     body {
