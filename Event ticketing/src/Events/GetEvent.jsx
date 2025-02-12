@@ -94,7 +94,8 @@ const EventDetails = () => {
 
           if (bookingResponse.data.success) {
             setMaxBookings(bookingResponse.data.maxBookings);
-            if (bookingResponse.data.maxBookings > params.availSlots)
+            console.log(bookingResponse.data.maxBookings);
+            if (bookingResponse.data.maxBookings > response.data.availSlots)
               setMaxBookings(response.data.availSlots);
             setParams({ ...params, existing: bookingResponse.data.Booked });
             if (bookingResponse.data.maxBookings <= 0) {
@@ -102,6 +103,11 @@ const EventDetails = () => {
               setMaxBookings(1);
               setMessage("Max Bookings Made");
               setMessageStyle("text-red-500");
+            }
+            if (response.data.availSlots <= 0) {
+              setMessage("Event Full");
+              setMessageStyle("text-red-500");
+              setdisableBooking(true);
             }
           } else {
             setError(bookingResponse.data.message);
